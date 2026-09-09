@@ -92,10 +92,19 @@
     height:80px;
   }
   .logo-group{ display:flex; align-items:center; gap:12px; }
+  .logo-avatar-link{ display:flex; flex-shrink:0; border-radius:50%; }
   .logo-avatar{
     width:36px; height:36px; border-radius:50%;
     object-fit:cover; flex-shrink:0;
     border:2px solid #fff;
+    animation:avatar-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes avatar-pulse{
+    0%, 100%{ transform:scale(1); }
+    50%{ transform:scale(1.08); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .logo-avatar{ animation:none; }
   }
   .logo{
     font-family:'Bricolage Grotesque', sans-serif;
@@ -723,7 +732,9 @@
 <header>
   <div class="wrap">
     <div class="logo-group">
-      <img class="logo-avatar" src="images/avatar.jpg" alt="Krzysztof Chruślicki">
+      <a class="logo-avatar-link" href="#contact" aria-label="Przejdź do kontaktu">
+        <img class="logo-avatar" src="images/avatar.jpg" alt="Krzysztof Chruślicki">
+      </a>
       <div class="logo"><span class="logo-first">Krzysztof</span> Chruślicki</div>
     </div>
     <div class="header-controls">

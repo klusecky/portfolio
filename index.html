@@ -480,6 +480,15 @@
   }
 
   /* ---------- About ---------- */
+  .about{ position:relative; overflow:hidden; }
+  .about-bg-logo{
+    position:absolute; z-index:-1; pointer-events:none;
+    top:50%; right:-60px;
+    width:520px; height:520px;
+    transform:translateY(-50%);
+    filter:grayscale(1) brightness(1.8);
+    opacity:.05;
+  }
   .about .wrap{ display:grid; grid-template-columns:.85fr 1.15fr; gap:72px; align-items:start; }
   .about-intro{ display:flex; flex-direction:column; gap:28px; }
   .portrait{
@@ -934,6 +943,7 @@
 </section>
 
 <section class="section about" id="about">
+  <img class="about-bg-logo" src="images/resolve-logo.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">
   <div class="wrap">
     <div class="about-intro">
       <h2 class="reveal" data-pl="O mnie" data-en="About me">O mnie</h2>

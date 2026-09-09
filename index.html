@@ -91,13 +91,19 @@
     display:flex; align-items:center; justify-content:space-between;
     height:80px;
   }
+  .logo-group{ display:flex; align-items:center; gap:12px; }
+  .logo-avatar{
+    width:36px; height:36px; border-radius:50%;
+    object-fit:cover; flex-shrink:0;
+    border:2px solid #fff;
+  }
   .logo{
     font-family:'Bricolage Grotesque', sans-serif;
     font-size:18px;
     font-weight:700;
     letter-spacing:-.01em;
   }
-  .logo span{ color:var(--text-dim); font-weight:500; }
+  .logo .logo-first{ color:var(--text-dim); font-weight:500; }
 
   .header-controls{ display:flex; align-items:center; gap:28px; }
 
@@ -716,7 +722,10 @@
 
 <header>
   <div class="wrap">
-    <div class="logo">Krzysztof <span>Chruślicki</span></div>
+    <div class="logo-group">
+      <img class="logo-avatar" src="images/avatar.jpg" alt="Krzysztof Chruślicki">
+      <div class="logo"><span class="logo-first">Krzysztof</span> Chruślicki</div>
+    </div>
     <div class="header-controls">
       <nav id="site-nav">
         <a href="#work" data-pl="Projekty" data-en="Work">Projekty</a>

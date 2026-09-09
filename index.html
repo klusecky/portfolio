@@ -672,8 +672,15 @@
   }
   .reveal.is-visible{ opacity:1; transform:none; }
 
+  .type-on{
+    clip-path:inset(0 100% 0 0);
+    transition:clip-path 1.1s cubic-bezier(.16,.84,.44,1);
+  }
+  .type-on.is-visible{ clip-path:inset(0 0% 0 0); }
+
   @media (prefers-reduced-motion: reduce){
     .hero h1, .hero-meta, .hero-frame{ animation:none; opacity:1; transform:none; }
+    .type-on{ clip-path:none; transition:none; }
     html{ scroll-behavior:auto; }
     .card{ transition:none; }
     .reveal{ opacity:1; transform:none; transition:none; }
@@ -758,7 +765,7 @@
   <div class="wrap">
     <h1 data-pl-html="Cięcia, które&lt;br&gt;robią &lt;span&gt;różnicę&lt;/span&gt;." data-en-html="Cuts that&lt;br&gt;make a &lt;span&gt;difference&lt;/span&gt;.">Cięcia, które<br>robią <span>różnicę</span>.</h1>
     <div class="hero-meta">
-      <p data-pl="Montażysta tworzący dłuższe formy dla YouTube i Instagrama - od surowego materiału do gotowej, wciągającej opowieści." data-en="Video editor crafting long-form content for YouTube and Instagram - from raw footage to a polished, engaging story.">Montażysta tworzący dłuższe formy dla YouTube i Instagrama - od surowego materiału do gotowej, wciągającej opowieści.</p>
+      <p class="type-on" data-pl="Montażysta tworzący dłuższe formy dla YouTube i Instagrama - od surowego materiału do gotowej, wciągającej opowieści." data-en="Video editor crafting long-form content for YouTube and Instagram - from raw footage to a polished, engaging story.">Montażysta tworzący dłuższe formy dla YouTube i Instagrama - od surowego materiału do gotowej, wciągającej opowieści.</p>
       <div class="hero-tags">
         <span>YouTube</span>
         <span>Instagram</span>
@@ -786,7 +793,7 @@
   <div class="wrap">
     <div class="section-head">
       <h2 class="reveal" data-pl="Wybrane projekty" data-en="Selected Work">Wybrane projekty</h2>
-      <p data-pl="Realizacje z ostatnich lat - długie formy na YouTube, tutoriale, współprace turystyczne, eseje gamingowe i krótkie treści na Instagramie." data-en="Recent projects - long-form YouTube content, tutorials, travel collaborations, gaming essays, and short-form content for Instagram.">Realizacje z ostatnich lat - długie formy na YouTube, tutoriale, współprace turystyczne, eseje gamingowe i krótkie treści na Instagramie.</p>
+      <p class="type-on" data-pl="Realizacje z ostatnich lat - długie formy na YouTube, tutoriale, współprace turystyczne, eseje gamingowe i krótkie treści na Instagramie." data-en="Recent projects - long-form YouTube content, tutorials, travel collaborations, gaming essays, and short-form content for Instagram.">Realizacje z ostatnich lat - długie formy na YouTube, tutoriale, współprace turystyczne, eseje gamingowe i krótkie treści na Instagramie.</p>
     </div>
 
     <div class="category">
@@ -973,7 +980,7 @@
   <div class="wrap">
     <div class="section-head">
       <h2 class="reveal" data-pl="Jak wygląda współpraca" data-en="How we work together">Jak wygląda współpraca</h2>
-      <p data-pl="Prosty proces - od przesłania surowego materiału do gotowego filmu w 4K." data-en="A simple process - from raw footage to a finished 4K film.">Prosty proces - od przesłania surowego materiału do gotowego filmu w 4K.</p>
+      <p class="type-on" data-pl="Prosty proces - od przesłania surowego materiału do gotowego filmu w 4K." data-en="A simple process - from raw footage to a finished 4K film.">Prosty proces - od przesłania surowego materiału do gotowego filmu w 4K.</p>
     </div>
 
     <div class="process-grid">
@@ -1046,7 +1053,7 @@
   <div class="wrap">
     <div class="section-head">
       <h2 class="reveal" data-pl="Cennik" data-en="Pricing">Cennik</h2>
-      <p data-pl="Orientacyjne stawki - dokładna wycena zależy od zakresu, długości i terminu projektu." data-en="Indicative rates - the exact quote depends on scope, length and turnaround time.">Orientacyjne stawki - dokładna wycena zależy od zakresu, długości i terminu projektu.</p>
+      <p class="type-on" data-pl="Orientacyjne stawki - dokładna wycena zależy od zakresu, długości i terminu projektu." data-en="Indicative rates - the exact quote depends on scope, length and turnaround time.">Orientacyjne stawki - dokładna wycena zależy od zakresu, długości i terminu projektu.</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card">
@@ -1241,7 +1248,8 @@
 
   /* ---------- Heading reveal on scroll ---------- */
   const revealEls = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window && revealEls.length) {
+  const typeOnEls = document.querySelectorAll('.type-on');
+  if ('IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -1251,8 +1259,23 @@
       });
     }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
     revealEls.forEach((el) => revealObserver.observe(el));
+
+    /* Observe the parent, not the clipped element itself - a fully
+       clip-path-hidden element can fail to register as intersecting. */
+    typeOnEls.forEach((el) => {
+      const typeObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+      typeObserver.observe(el.parentElement || el);
+    });
   } else {
     revealEls.forEach((el) => el.classList.add('is-visible'));
+    typeOnEls.forEach((el) => el.classList.add('is-visible'));
   }
 
   /* ---------- Mobile nav ---------- */

@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krzysztof Chruślicki - Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0d0f14;
+    --bg-grad-1: #182228;
+    --bg-grad-2: #0d0f14;
+    --surface: #131317;
+    --surface-2: #191a1f;
+    --text: #f4f5f7;
+    --text-dim: #8d8f9a;
+    --text-faint: #55575f;
+    --accent: #819fa7;
+    --accent-soft: rgba(129,159,167,.16);
+    --line: #1f2027;
+    --radius: 18px;
+    --radius-sm: 10px;
+    --maxw: 1180px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:linear-gradient(150deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 65%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-weight:400;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 40px; }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:40;
+    background:rgba(10,10,13,.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  header .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:80px;
+  }
+  .logo{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  .logo span{ color:var(--text-dim); font-weight:500; }
+
+  .header-controls{ display:flex; align-items:center; gap:28px; }
+
+  nav{ display:flex; gap:40px; }
+  nav a{
+    position:relative;
+    text-decoration:none;
+    font-size:14.5px;
+    font-weight:500;
+    color:var(--text-dim);
+    transition:color .2s ease;
+    padding-bottom:2px;
+  }
+  nav a::after{
+    content:"";
+    position:absolute; left:0; right:100%; bottom:-2px;
+    height:1px; background:var(--accent);
+    transition:right .25s ease;
+  }
+  nav a:hover{ color:var(--text); }
+  nav a:hover::after{ right:0; }
+
+  .lang-toggle{
+    font-size:13px; font-weight:600; letter-spacing:.02em;
+    padding:7px 14px; border-radius:100px;
+    border:1px solid var(--line);
+    background:var(--surface); color:var(--text-dim);
+    cursor:pointer;
+    transition:border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .lang-toggle:hover{ color:var(--text); border-color:rgba(129,159,167,.4); background:var(--accent-soft); }
+
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:36px; height:36px; margin:-8px; padding:8px;
+    background:none; border:none; cursor:pointer;
+  }
+  .nav-toggle span{
+    display:block; width:100%; height:2px; background:var(--text); border-radius:2px;
+    transition:transform .25s ease, opacity .2s ease;
+  }
+  .nav-toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+  .nav-toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:120px 0 100px; }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:72px;
+    align-items:end;
+  }
+  .hero h1{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800;
+    font-size:clamp(42px, 6vw, 76px);
+    line-height:1;
+    letter-spacing:-.02em;
+  }
+  .hero h1 span{ color:var(--accent); }
+  .hero-meta{ display:flex; flex-direction:column; gap:26px; }
+  .hero-meta p{
+    font-size:17px;
+    color:var(--text-dim);
+    max-width:38ch;
+  }
+  .hero-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+  .hero-tags span{
+    font-size:13px;
+    font-weight:500;
+    padding:7px 14px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:100px;
+    color:var(--text-dim);
+  }
+
+  .hero .wrap.hero-video-outer{ display:block; }
+  .hero-video{
+    max-width:660px; margin:64px auto 0;
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  .hero-video-label{
+    font-size:12px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+
+  .hero-frame{
+    width:100%;
+    aspect-ratio:16/9;
+    border-radius:var(--radius);
+    position:relative;
+    isolation:isolate;
+    overflow:hidden;
+    display:block; width:100%;
+    background:linear-gradient(135deg, #1a2233 0%, #101116 60%, #16202e 100%);
+    border:1px solid var(--line);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.5);
+    cursor:pointer;
+    padding:0; text-align:left; font-family:inherit; appearance:none;
+  }
+  .hero-frame-thumb{
+    position:absolute; inset:0; z-index:0;
+    width:100%; height:100%; object-fit:cover;
+    opacity:0; transition:opacity .4s ease, transform .5s ease;
+  }
+  .hero-frame-thumb.is-loaded{ opacity:.9; }
+  .hero-frame:hover .hero-frame-thumb{ transform:scale(1.02); opacity:1; }
+  .hero-frame::after{
+    content:"";
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(10,10,13,.08) 45%, rgba(10,10,13,.82) 100%),
+      radial-gradient(ellipse at 25% 115%, rgba(129,159,167,.22), transparent 55%);
+  }
+  .hero-frame iframe{ position:absolute; inset:0; z-index:2; width:100%; height:100%; border:0; }
+  .hero-frame .play{
+    position:absolute; left:28px; bottom:24px; z-index:2;
+    display:flex; align-items:center; gap:14px;
+    font-size:13.5px; font-weight:500; color:var(--text-dim);
+    max-width:calc(100% - 100px);
+  }
+  .hero-frame .play span:last-child{
+    text-align:left; color:var(--text);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .play-dot{
+    flex-shrink:0;
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(244,245,247,.08);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(244,245,247,.14);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .hero-frame:hover .play-dot{ background:var(--accent); transform:scale(1.06); }
+  .play-dot::after{
+    content:"";
+    border-left:10px solid var(--text);
+    border-top:6px solid transparent;
+    border-bottom:6px solid transparent;
+    margin-left:3px;
+  }
+  .hero-frame .timecode{
+    position:absolute; right:28px; top:24px; z-index:2;
+    font-variant-numeric:tabular-nums;
+    font-size:12px; color:var(--text-dim);
+    letter-spacing:.04em;
+    background:rgba(10,10,13,.5); padding:4px 9px; border-radius:100px;
+  }
+
+  /* ---------- Work ---------- */
+  .section{ padding:100px 0; }
+  .section + .section{ border-top:1px solid var(--line); }
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:56px; gap:24px;
+  }
+  .section-head h2{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700; font-size:34px; letter-spacing:-.01em;
+    padding-top:4px;
+  }
+  .section-head p{ color:var(--text-dim); max-width:34ch; font-size:15px; padding-top:9px; }
+
+  .category{ margin-bottom:60px; }
+  .category:last-child{ margin-bottom:0; }
+  .category-head{ margin-bottom:22px; }
+  .category-head h3{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700; font-size:19px; letter-spacing:-.005em;
+  }
+
+  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+
+  .card{
+    display:block; text-decoration:none;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 16px 32px -20px rgba(0,0,0,.6);
+    transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .3s ease;
+  }
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(129,159,167,.35);
+    box-shadow:0 24px 48px -24px rgba(0,0,0,.7);
+  }
+
+  .card-media{ aspect-ratio:16/9; position:relative; overflow:hidden; background:var(--surface-2); }
+  .card-media img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition:transform .5s ease;
+  }
+  .card:hover .card-media img{ transform:scale(1.045); }
+
+  .card-media::after{
+    content:"";
+    position:absolute; inset:0; opacity:0;
+    background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,.55));
+    transition:opacity .35s ease;
+  }
+  .card:hover .card-media::after{ opacity:1; }
+
+  .card-media .play-mini{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.85);
+    width:46px; height:46px; border-radius:50%;
+    background:rgba(10,10,13,.5);
+    backdrop-filter:blur(4px);
+    border:1px solid rgba(244,245,247,.16);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .3s ease, transform .3s ease;
+    z-index:1;
+  }
+  .card:hover .play-mini{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .play-mini::after{
+    content:"";
+    border-left:8px solid var(--text);
+    border-top:5px solid transparent;
+    border-bottom:5px solid transparent;
+    margin-left:2px;
+  }
+
+  .card-media .dur{
+    position:absolute; right:14px; bottom:12px; z-index:1;
+    font-size:12px; font-weight:500; color:var(--text);
+    letter-spacing:.03em;
+    background:rgba(10,10,13,.6);
+    padding:3px 8px; border-radius:100px;
+  }
+  .card-media .views{
+    position:absolute; left:14px; bottom:12px; z-index:1;
+    display:flex; align-items:center; gap:4px;
+    font-size:12px; font-weight:500; color:var(--text);
+    letter-spacing:.02em;
+    background:rgba(10,10,13,.6);
+    padding:3px 9px 3px 7px; border-radius:100px;
+  }
+  .card-media .views svg{ width:12px; height:12px; opacity:.85; flex-shrink:0; }
+
+  .card-body{ padding:18px 20px 20px; display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .card-body h4{ font-size:15.5px; font-weight:600; letter-spacing:-.005em; line-height:1.35; }
+  .card-body span{ font-size:12px; font-weight:500; color:var(--accent); white-space:nowrap; }
+
+  /* Instagram grid - vertical thumbnails, no caption block */
+  .grid-ig{ grid-template-columns:repeat(4, 1fr); gap:16px; }
+  .card-ig .card-media{ aspect-ratio:9/16; }
+
+  /* ---------- Testimonial ---------- */
+  .testimonial{ padding:80px 0; }
+  .testimonial-quote{
+    max-width:800px; margin:0 auto;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:48px 56px;
+    position:relative;
+  }
+  .testimonial-quote::before{
+    content:"“";
+    position:absolute; top:18px; left:28px;
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-size:80px; font-weight:800; line-height:1;
+    color:var(--accent); opacity:.35;
+  }
+  .testimonial-quote p{
+    position:relative;
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:500; font-size:22px; line-height:1.45; letter-spacing:-.005em;
+    color:var(--text);
+  }
+  .testimonial-quote footer{
+    margin-top:24px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+  }
+  .testimonial-quote cite{
+    font-style:normal; font-weight:600; font-size:15px; color:var(--text);
+    text-decoration:none;
+  }
+  .testimonial-quote a{ text-decoration:none; }
+  .testimonial-quote a:hover cite{ color:var(--accent); }
+  .testimonial-quote footer span{ font-size:13px; color:var(--text-dim); }
+
+  .retention-box{
+    max-width:800px; margin:20px auto 0;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:18px 28px;
+  }
+  .retention-box span{ font-size:14px; color:var(--text-dim); }
+  .retention-box strong{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-size:24px; font-weight:700; color:var(--accent); white-space:nowrap;
+  }
+
+  @media (max-width: 640px){
+    .testimonial-quote{ padding:36px 28px; }
+    .testimonial-quote p{ font-size:19px; }
+    .testimonial-quote::before{ font-size:60px; top:8px; left:16px; }
+    .retention-box{ padding:16px 22px; }
+  }
+
+  /* ---------- Pricing ---------- */
+  .pricing-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .price-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:36px; box-shadow:0 16px 32px -20px rgba(0,0,0,.6);
+  }
+  .price-card h3{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700; font-size:21px; letter-spacing:-.005em;
+  }
+  .price-card-sub{ color:var(--text-dim); font-size:13.5px; margin-top:8px; margin-bottom:26px; }
+  .price-rows{ list-style:none; }
+  .price-rows li{
+    display:flex; justify-content:space-between; align-items:baseline; gap:16px;
+    padding:13px 0; border-top:1px solid var(--line); font-size:14.5px;
+  }
+  .price-rows li:first-child{ border-top:none; }
+  .price-rows li span{ color:var(--text-dim); }
+  .price-rows li strong{ color:var(--text); font-weight:600; white-space:nowrap; }
+
+  .price-extra{
+    margin-top:24px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px 36px;
+    display:flex; flex-wrap:wrap; gap:28px;
+  }
+  .price-extra-item{ flex:1 1 200px; display:flex; flex-direction:column; gap:4px; }
+  .price-extra-item strong{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700; font-size:19px; color:var(--accent);
+  }
+  .price-extra-item span{ font-size:13px; color:var(--text-dim); line-height:1.4; }
+
+  @media (max-width: 780px){
+    .pricing-grid{ grid-template-columns:1fr; }
+    .price-extra{ padding:24px; gap:22px; }
+  }
+
+  /* ---------- About ---------- */
+  .about .wrap{ display:grid; grid-template-columns:.85fr 1.15fr; gap:72px; align-items:start; }
+  .about-intro{ display:flex; flex-direction:column; gap:28px; }
+  .portrait{
+    position:relative;
+    aspect-ratio:3/4;
+    max-width:340px;
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid var(--line);
+    box-shadow:0 30px 60px -30px rgba(0,0,0,.6);
+  }
+  .portrait img{
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(1) contrast(1.05) brightness(.96);
+    transition:filter .5s ease;
+  }
+  .portrait:hover img{ filter:grayscale(0) contrast(1.05) brightness(1); }
+  .about h2{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700; font-size:34px; letter-spacing:-.01em;
+  }
+  .about-copy{ padding-top:80px; }
+  .about-copy p{ font-size:17px; color:var(--text-dim); max-width:56ch; margin-bottom:20px; }
+  .about-copy p:last-child{ margin-bottom:0; }
+  .about-copy strong{ color:var(--text); font-weight:600; }
+
+  .tools{ margin-top:32px; display:flex; flex-wrap:wrap; gap:8px; }
+  .tools span{
+    font-size:12.5px; font-weight:500; color:var(--text-dim);
+    padding:7px 14px; background:var(--surface);
+    border:1px solid var(--line); border-radius:100px;
+  }
+
+  /* ---------- Contact / footer ---------- */
+  .contact{ padding:110px 0 80px; }
+  .contact-grid{ display:grid; grid-template-columns:.85fr 1.15fr; gap:64px; align-items:start; }
+  .contact-intro{ display:flex; flex-direction:column; gap:24px; }
+  .contact h2{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800; font-size:clamp(34px, 5vw, 54px); letter-spacing:-.02em; max-width:14ch;
+  }
+  .contact-intro > p{ color:var(--text-dim); font-size:16.5px; max-width:38ch; }
+
+  .contact-form{
+    display:flex; flex-direction:column; gap:18px;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:32px;
+  }
+  .field{ display:flex; flex-direction:column; gap:8px; }
+  .field label{ font-size:13px; font-weight:500; color:var(--text-dim); }
+  .field input, .field textarea{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:12px 14px; color:var(--text); font-family:'Inter', sans-serif; font-size:14.5px;
+    transition:border-color .2s ease;
+  }
+  .field input::placeholder, .field textarea::placeholder{ color:var(--text-faint); }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--accent); }
+  .field textarea{ resize:vertical; min-height:110px; }
+  .contact-form .submit-row{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .contact-form button{
+    background:var(--accent); color:#0a0a0d; font-weight:600; font-size:14.5px;
+    border:none; border-radius:100px; padding:12px 26px; cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .contact-form button:hover{ transform:translateY(-2px); box-shadow:0 12px 24px -8px rgba(129,159,167,.5); }
+  .contact-form button:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none; }
+  .form-status{ font-size:13.5px; color:var(--text-dim); }
+  .form-status.success{ color:#7ad495; }
+  .form-status.error{ color:#e28080; }
+
+  footer{ border-top:1px solid var(--line); padding:28px 0; }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; font-size:12.5px; color:var(--text-faint); }
+  .footer-social{ display:flex; gap:16px; }
+  .footer-social a{ color:var(--text-faint); display:flex; transition:color .2s ease; }
+  .footer-social a:hover{ color:var(--accent); }
+
+  /* ---------- Motion: one deliberate reveal on load ---------- */
+  .hero h1, .hero-meta, .hero-frame{
+    opacity:0; transform:translateY(14px);
+    animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .hero-meta{ animation-delay:.1s; }
+  .hero-frame{ animation-delay:.18s; }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+
+  .reveal{
+    opacity:0; transform:translateY(18px);
+    transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.is-visible{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero h1, .hero-meta, .hero-frame{ animation:none; opacity:1; transform:none; }
+    html{ scroll-behavior:auto; }
+    .card{ transition:none; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+  }
+
+  a:focus-visible, .card:focus-visible, .lang-toggle:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  @media (max-width: 860px){
+    .hero .wrap{ grid-template-columns:1fr; gap:40px; }
+    .grid{ grid-template-columns:1fr 1fr; }
+    .grid-ig{ grid-template-columns:repeat(3, 1fr); }
+    .about .wrap{ grid-template-columns:1fr; gap:32px; }
+    .contact-grid{ grid-template-columns:1fr; gap:40px; }
+  }
+  @media (max-width: 640px){
+    .nav-toggle{ display:flex; }
+    .header-controls{ gap:14px; }
+    nav{
+      position:fixed; top:80px; left:0; right:0; z-index:39;
+      flex-direction:column; gap:0;
+      background:rgba(10,10,13,.97);
+      backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
+      max-height:0; overflow:hidden;
+      transition:max-height .3s ease;
+    }
+    nav.is-open{ max-height:260px; }
+    nav a{
+      padding:16px 22px; border-top:1px solid var(--line);
+      font-size:15.5px;
+    }
+    nav a:first-child{ border-top:none; }
+    nav a::after{ display:none; }
+  }
+  @media (max-width: 560px){
+    .wrap{ padding:0 22px; }
+    .grid{ grid-template-columns:1fr; gap:16px; }
+    .grid-ig{ grid-template-columns:repeat(2, 1fr); }
+    .section{ padding:72px 0; }
+    .section-head{ flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">Krzysztof <span>Chruślicki</span></div>
+    <div class="header-controls">
+      <nav id="site-nav">
+        <a href="#work" data-pl="Projekty" data-en="Work">Projekty</a>
+        <a href="#cennik" data-pl="Cennik" data-en="Pricing">Cennik</a>
+        <a href="#about" data-pl="O mnie" data-en="About">O mnie</a>
+        <a href="#contact" data-pl="Kontakt" data-en="Contact">Kontakt</a>
+      </nav>
+      <button class="lang-toggle" id="lang-toggle" type="button">EN</button>
+      <button class="nav-toggle" id="nav-toggle" type="button" data-pl-aria="Otwórz menu" data-en-aria="Open menu" aria-label="Otwórz menu" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 data-pl-html="Cięcia, które&lt;br&gt;robią &lt;span&gt;różnicę&lt;/span&gt;." data-en-html="Cuts that&lt;br&gt;make a &lt;span&gt;difference&lt;/span&gt;.">Cięcia, które<br>robią <span>różnicę</span>.</h1>
+    <div class="hero-meta">
+      <p data-pl="Montażysta tworzący dłuższe formy dla YouTube i Instagrama - od surowego materiału do gotowej, wciągającej opowieści." data-en="Video editor crafting long-form content for YouTube and Instagram - from raw footage to a polished, engaging story.">Montażysta tworzący dłuższe formy dla YouTube i Instagrama - od surowego materiału do gotowej, wciągającej opowieści.</p>
+      <div class="hero-tags">
+        <span>YouTube</span>
+        <span>Instagram</span>
+        <span data-pl="Długie formy" data-en="Long form">Długie formy</span>
+        <span>Storytelling</span>
+      </div>
+    </div>
+  </div>
+  <div class="wrap hero-video-outer">
+    <div class="hero-video">
+      <span class="hero-video-label" data-pl="Przykładowa realizacja z portfolio" data-en="Example project from my portfolio">Przykładowa realizacja z portfolio</span>
+      <div class="hero-frame" id="hero-frame" role="button" tabindex="0" data-pl-aria="Odtwórz przykładową realizację" data-en-aria="Play example project" aria-label="Odtwórz przykładową realizację">
+        <img class="hero-frame-thumb" id="hero-frame-thumb" src="https://i.ytimg.com/vi/q4ixncPZXAc/hqdefault.jpg" alt="">
+        <span class="timecode" id="hero-frame-dur">26:05</span>
+        <span class="play">
+          <span class="play-dot"></span>
+          <span id="hero-frame-title">Szpital, łapówki, zepsute hamulce: co nas spotkało w Afryce?</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="reveal" data-pl="Wybrane projekty" data-en="Selected Work">Wybrane projekty</h2>
+      <p data-pl="Realizacje z ostatnich lat - długie formy na YouTube, tutoriale, współprace turystyczne, eseje gamingowe i krótkie treści na Instagramie." data-en="Recent projects - long-form YouTube content, tutorials, travel collaborations, gaming essays, and short-form content for Instagram.">Realizacje z ostatnich lat - długie formy na YouTube, tutoriale, współprace turystyczne, eseje gamingowe i krótkie treści na Instagramie.</p>
+    </div>
+
+    <div class="category">
+      <div class="category-head">
+        <h3 data-pl="Seria podróżnicza - vlogi z Kenii" data-en="Travel series - Kenya vlogs">Seria podróżnicza - vlogi z Kenii</h3>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://youtu.be/q4ixncPZXAc" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/q4ixncPZXAc/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>59K</span>
+            <span class="dur">26:05</span>
+          </div>
+          <div class="card-body"><h4>Szpital, łapówki, zepsute hamulce: co nas spotkało w Afryce?</h4><span>YouTube</span></div>
+        </a>
+        <a class="card" href="https://youtu.be/SdUdk4R4wNQ" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/SdUdk4R4wNQ/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>38K</span>
+            <span class="dur">20:48</span>
+          </div>
+          <div class="card-body"><h4>Jak NAPRAWDĘ żyją dzisiaj Masajowie? Bez prądu i wody w XXI wieku</h4><span>YouTube</span></div>
+        </a>
+        <a class="card" href="https://youtu.be/Wy-UjreUm4c" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/Wy-UjreUm4c/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>52K</span>
+            <span class="dur">18:47</span>
+          </div>
+          <div class="card-body"><h4>Afryka za 15$ czy za 1500 zł? Dwa zupełnie różne światy [Kenia]</h4><span>YouTube</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-head">
+        <h3 data-pl="Life Style - seria Busy on the Farm" data-en="Life Style - the Busy on the Farm series">Life Style - seria Busy on the Farm</h3>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://youtu.be/AznsrqcEAxk" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/AznsrqcEAxk/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>59K</span>
+            <span class="dur">22:27</span>
+          </div>
+          <div class="card-body"><h4>Budujemy meble ogrodowe z palet</h4><span>YouTube</span></div>
+        </a>
+        <a class="card" href="https://youtu.be/B1dNN_OwBQg" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/B1dNN_OwBQg/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>79K</span>
+            <span class="dur">27:32</span>
+          </div>
+          <div class="card-body"><h4>3 tygodnie poza domem i mamy nowe kurczaki</h4><span>YouTube</span></div>
+        </a>
+        <a class="card" href="https://youtu.be/u_uD355-sUU" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/u_uD355-sUU/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>50K</span>
+            <span class="dur">23:58</span>
+          </div>
+          <div class="card-body"><h4>Czy damy radę z hodowlą kaczek? Zaczynamy!</h4><span>YouTube</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-head">
+        <h3 data-pl="Tutoriale" data-en="Tutorials">Tutoriale</h3>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://www.youtube.com/watch?v=5qFMykDqqKE" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/5qFMykDqqKE/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>72K</span>
+            <span class="dur">24:38</span>
+          </div>
+          <div class="card-body"><h4>Czy AI zorganizuje lepszą podróż niż my?</h4><span>Busem Przez Świat</span></div>
+        </a>
+        <a class="card" href="https://www.youtube.com/watch?v=BSqunKScFaE" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/BSqunKScFaE/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>11K</span>
+            <span class="dur">13:20</span>
+          </div>
+          <div class="card-body"><h4>5 sposobów na lepsze zdjęcia krajobrazowe // Paweł Jagiełło</h4><span>Projekt Fotografia</span></div>
+        </a>
+        <a class="card" href="https://www.youtube.com/watch?v=Am6HJBqY0XI" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/Am6HJBqY0XI/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>7.4K</span>
+            <span class="dur">8:32</span>
+          </div>
+          <div class="card-body"><h4>Jak stworzyć portret z naturalną emocją? // Aleksandra Zaborowska</h4><span>Projekt Fotografia</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-head">
+        <h3 data-pl="Współprace turystyczne" data-en="Tourism collaborations">Współprace turystyczne</h3>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://youtu.be/_4aNcOieu6s" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/_4aNcOieu6s/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>135K</span>
+            <span class="dur">17:33</span>
+          </div>
+          <div class="card-body"><h4>Odkryj sekrety Kopalni Guido i Sztolni Królowa Luiza</h4><span>YouTube</span></div>
+        </a>
+        <a class="card" href="https://youtu.be/f60s08255iA" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/f60s08255iA/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>225K</span>
+            <span class="dur">26:11</span>
+          </div>
+          <div class="card-body"><h4>Gdzie na wakacje w Polsce? 5 sprawdzonych miejsc z dala od ludzi</h4><span>YouTube</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-head">
+        <h3 data-pl="Gamingowe eseje" data-en="Gaming essays">Gamingowe eseje</h3>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://youtu.be/rnwim2Z2P-g" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/rnwim2Z2P-g/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>235</span>
+            <span class="dur">13:01</span>
+          </div>
+          <div class="card-body"><h4>Dlaczego kochamy umierać w grach?</h4><span>Irovain</span></div>
+        </a>
+        <a class="card" href="https://youtu.be/ZZa4wveWqvE" target="_blank" rel="noopener">
+          <div class="card-media">
+            <img src="https://i.ytimg.com/vi/ZZa4wveWqvE/hqdefault.jpg" alt="" loading="lazy">
+            <span class="play-mini"></span>
+            <span class="views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>510</span>
+            <span class="dur">10:14</span>
+          </div>
+          <div class="card-body"><h4>Tajemnice e-sportu, o których nikt Ci nie powiedział</h4><span>Irovain</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-head">
+        <h3>Instagram - short form content</h3>
+      </div>
+      <div class="grid grid-ig">
+        <a class="card card-ig" href="https://www.instagram.com/p/Dauagi-tb5j/" target="_blank" rel="noopener">
+          <div class="card-media"><img src="images/instagram/ig1.jpg" data-pl-alt="Krótka forma wideo na Instagramie" data-en-alt="Short-form video on Instagram" alt="Krótka forma wideo na Instagramie" loading="lazy"><span class="play-mini"></span></div>
+        </a>
+        <a class="card card-ig" href="https://www.instagram.com/p/DZ9jN2LNw3H/" target="_blank" rel="noopener">
+          <div class="card-media"><img src="images/instagram/ig2.jpg" data-pl-alt="Krótka forma wideo na Instagramie" data-en-alt="Short-form video on Instagram" alt="Krótka forma wideo na Instagramie" loading="lazy"><span class="play-mini"></span></div>
+        </a>
+        <a class="card card-ig" href="https://www.instagram.com/p/DXOSC6GDeGn/" target="_blank" rel="noopener">
+          <div class="card-media"><img src="images/instagram/ig3.jpg" data-pl-alt="Krótka forma wideo na Instagramie" data-en-alt="Short-form video on Instagram" alt="Krótka forma wideo na Instagramie" loading="lazy"><span class="play-mini"></span></div>
+        </a>
+        <a class="card card-ig" href="https://www.instagram.com/p/DcQAsaMxsjw/" target="_blank" rel="noopener">
+          <div class="card-media"><img src="images/instagram/ig4.jpg" data-pl-alt="Krótka forma wideo na Instagramie" data-en-alt="Short-form video on Instagram" alt="Krótka forma wideo na Instagramie" loading="lazy"><span class="play-mini"></span></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="cennik">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="reveal" data-pl="Cennik" data-en="Pricing">Cennik</h2>
+      <p data-pl="Orientacyjne stawki - dokładna wycena zależy od zakresu, długości i terminu projektu." data-en="Indicative rates - the exact quote depends on scope, length and turnaround time.">Orientacyjne stawki - dokładna wycena zależy od zakresu, długości i terminu projektu.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Long form</h3>
+        <p class="price-card-sub" data-pl="YouTube, 15-40 min - montaż, color grading, dźwięk, tytuły" data-en="YouTube, 15-40 min - editing, color grading, sound, titles">YouTube, 15-40 min - montaż, color grading, dźwięk, tytuły</p>
+        <ul class="price-rows">
+          <li><span data-pl="Do 15 min" data-en="Up to 15 min">Do 15 min</span><strong data-pl="750-1100 zł" data-en="£150-220">£150-220</strong></li>
+          <li><span>15-25 min</span><strong data-pl="1100-1600 zł" data-en="£220-320">£220-320</strong></li>
+          <li><span>25-40 min</span><strong data-pl="1600-2250 zł" data-en="£320-450">£320-450</strong></li>
+          <li><span data-pl="Stawka za minutę" data-en="Per-minute rate">Stawka za minutę</span><strong data-pl="60-90 zł / min" data-en="£12-18 / min">£12-18 / min</strong></li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>Short form</h3>
+        <p class="price-card-sub" data-pl="Reels / Shorts, 15-90 sek" data-en="Reels / Shorts, 15-90 sec">Reels / Shorts, 15-90 sek</p>
+        <ul class="price-rows">
+          <li><span data-pl="Pojedynczy edit" data-en="Single edit">Pojedynczy edit</span><strong data-pl="175-300 zł" data-en="£35-60">£35-60</strong></li>
+          <li><span data-pl="Pakiet 10 szortów / mies." data-en="Package of 10 shorts / month">Pakiet 10 szortów / mies.</span><strong data-pl="1500-2250 zł" data-en="£300-450">£300-450</strong></li>
+          <li><span data-pl="Repurposing z long-forma" data-en="Repurposed from long-form">Repurposing z long-forma</span><strong data-pl="125-200 zł" data-en="£25-40">£25-40</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="price-extra">
+      <div class="price-extra-item">
+        <strong>10-15%</strong>
+        <span data-pl="rabat dla stałych klientów (np. 4 filmy/mies.)" data-en="discount for recurring clients (e.g. 4 videos/month)">rabat dla stałych klientów (np. 4 filmy/mies.)</span>
+      </div>
+      <div class="price-extra-item">
+        <strong>+25-30%</strong>
+        <span data-pl="za ekspresowy termin realizacji" data-en="for a rush turnaround">za ekspresowy termin realizacji</span>
+      </div>
+      <div class="price-extra-item">
+        <strong data-pl="3 rundy" data-en="3 rounds">3 rundy</strong>
+        <span data-pl="poprawek wliczone w cenę - dotyczy long i short form" data-en="of revisions included in the price - long and short form">poprawek wliczone w cenę - dotyczy long i short form</span>
+      </div>
+      <div class="price-extra-item">
+        <strong data-pl="125-175 zł/h" data-en="£25-35/h">£25-35/h</strong>
+        <span data-pl="dodatkowe rundy poprawek ponad pakiet" data-en="extra revision rounds beyond those included">dodatkowe rundy poprawek ponad pakiet</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section testimonial">
+  <div class="wrap">
+    <blockquote class="testimonial-quote">
+      <p>A great artist, punctual, creative, with his own ideas and an open mind to new skills. The best editor we have worked with in the last 15 years.</p>
+      <footer>
+        <a href="https://www.youtube.com/@BusemPrzezSwiat" target="_blank" rel="noopener"><cite>Podróże Busem Przez Świat</cite></a>
+        <span data-pl="· 234K subskrybentów na YouTube" data-en="· 234K subscribers on YouTube">· 234K subskrybentów na YouTube</span>
+      </footer>
+    </blockquote>
+    <div class="retention-box">
+      <span data-pl="Średnia retencja moich filmów przy obecnym kontencie" data-en="Average retention on my videos with current content">Średnia retencja moich filmów przy obecnym kontencie</span>
+      <strong>40-50%</strong>
+    </div>
+  </div>
+</section>
+
+<section class="section about" id="about">
+  <div class="wrap">
+    <div class="about-intro">
+      <h2 class="reveal" data-pl="O mnie" data-en="About me">O mnie</h2>
+      <div class="portrait">
+        <img src="images/portrait.jpg" data-pl-alt="Portret Krzysztofa Chruślickiego" data-en-alt="Portrait of Krzysztof Chruślicki" alt="Portret Krzysztofa Chruślickiego">
+      </div>
+    </div>
+    <div class="about-copy">
+      <p data-pl="Montuję od lat treści podróżnicze i lifestyle'owe w dłuższym formacie - zarówno własny kanał na YouTube, jak i projekty dla klientów. Zależy mi na tym, żeby materiał opowiadał historię, a nie tylko dobrze wyglądał." data-en="I've been editing long-form travel and lifestyle content for years - both my own YouTube channel and client projects. I care about the footage telling a story, not just looking good.">Montuję od lat treści podróżnicze i lifestyle'owe w dłuższym formacie - zarówno własny kanał na YouTube, jak i projekty dla klientów. Zależy mi na tym, żeby materiał opowiadał historię, a nie tylko dobrze wyglądał.</p>
+      <p data-pl-html="Pracuję w całości w &lt;strong&gt;DaVinci Resolve&lt;/strong&gt; - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami." data-en-html="I work entirely in &lt;strong&gt;DaVinci Resolve&lt;/strong&gt; - from the cut, through sound, to color grading. Everything in one environment, without jumping between apps.">Pracuję w całości w <strong>DaVinci Resolve</strong> - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami.</p>
+      <p data-pl="Dobrze czuję się też w środowisku 3D - przy prostych, czytelnych animacjach, które wzmacniają przekaz materiału." data-en="I'm also comfortable in 3D - simple, clear animations that reinforce the story.">Dobrze czuję się też w środowisku 3D - przy prostych, czytelnych animacjach, które wzmacniają przekaz materiału.</p>
+      <p data-pl="Nie boję się też sztucznej inteligencji - korzystam z niej świadomie, tam gdzie realnie przyspiesza pracę." data-en="I'm not afraid of AI either - I use it deliberately, wherever it genuinely speeds up the work.">Nie boję się też sztucznej inteligencji - korzystam z niej świadomie, tam gdzie realnie przyspiesza pracę.</p>
+      <div class="tools">
+        <span>DaVinci Resolve</span>
+        <span>Fusion</span>
+        <span>Fairlight</span>
+        <span>Blender</span>
+        <span>Color grading</span>
+        <span>Sound design</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
+    <div class="contact-intro">
+      <h2 class="reveal" data-pl="Masz materiał, który potrzebuje historii?" data-en="Got footage that needs a story?">Masz materiał, który potrzebuje historii?</h2>
+      <p data-pl="Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę." data-en="Send a few details about your project - footage length, deadline, what it's for - and I'll get back to you as soon as I can.">Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę.</p>
+    </div>
+    <form class="contact-form" id="contact-form" action="https://formspree.io/f/mvkovjqo" method="POST">
+      <div class="field">
+        <label for="cf-name" data-pl="Imię" data-en="Name">Imię</label>
+        <input type="text" id="cf-name" name="name" data-pl-placeholder="Jak się nazywasz?" data-en-placeholder="What's your name?" placeholder="Jak się nazywasz?" required>
+      </div>
+      <div class="field">
+        <label for="cf-email">E-mail</label>
+        <input type="email" id="cf-email" name="email" data-pl-placeholder="twoj@email.pl" data-en-placeholder="you@email.com" placeholder="twoj@email.pl" required>
+      </div>
+      <div class="field">
+        <label for="cf-message" data-pl="Wiadomość" data-en="Message">Wiadomość</label>
+        <textarea id="cf-message" name="message" data-pl-placeholder="Opowiedz mi o projekcie..." data-en-placeholder="Tell me about your project..." placeholder="Opowiedz mi o projekcie..." required></textarea>
+      </div>
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+      <div class="submit-row">
+        <button type="submit" data-pl="Wyślij wiadomość" data-en="Send message">Wyślij wiadomość</button>
+        <p class="form-status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Krzysztof Chruślicki</span>
+    <div class="footer-social">
+      <a href="https://www.youtube.com/@chruslicki" target="_blank" rel="noopener" aria-label="YouTube">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8ZM9.6 15.5v-7l6.3 3.5-6.3 3.5Z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/krzysiekchruslicki" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ---------- i18n ---------- */
+  let currentLang = localStorage.getItem('lang') || 'pl';
+  const langToggle = document.getElementById('lang-toggle');
+
+  const i18nStrings = {
+    pl: { sending: 'Wysyłanie...', success: 'Dziękuję! Odezwę się najszybciej jak mogę.', error: 'Coś poszło nie tak - napisz proszę bezpośrednio na e-mail.' },
+    en: { sending: 'Sending...', success: "Thank you! I'll get back to you as soon as possible.", error: 'Something went wrong - please email me directly instead.' }
+  };
+
+  function applyLang(lang){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-pl]').forEach((el) => { el.textContent = el.getAttribute('data-' + lang); });
+    document.querySelectorAll('[data-pl-html]').forEach((el) => { el.innerHTML = el.getAttribute('data-' + lang + '-html'); });
+    document.querySelectorAll('[data-pl-placeholder]').forEach((el) => { el.setAttribute('placeholder', el.getAttribute('data-' + lang + '-placeholder')); });
+    document.querySelectorAll('[data-pl-alt]').forEach((el) => { el.setAttribute('alt', el.getAttribute('data-' + lang + '-alt')); });
+    document.querySelectorAll('[data-pl-aria]').forEach((el) => { el.setAttribute('aria-label', el.getAttribute('data-' + lang + '-aria')); });
+    langToggle.textContent = lang === 'pl' ? 'EN' : 'PL';
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+  }
+  langToggle.addEventListener('click', () => applyLang(currentLang === 'pl' ? 'en' : 'pl'));
+  applyLang(currentLang);
+
+  /* ---------- Heading reveal on scroll ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && revealEls.length) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach((el) => revealObserver.observe(el));
+  } else {
+    revealEls.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  /* ---------- Mobile nav ---------- */
+  const navToggle = document.getElementById('nav-toggle');
+  const siteNav = document.getElementById('site-nav');
+
+  const closeNav = () => {
+    siteNav.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  };
+  navToggle.addEventListener('click', () => {
+    const isOpen = siteNav.classList.toggle('is-open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  siteNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeNav));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNav(); });
+  document.addEventListener('click', (e) => {
+    if (siteNav.classList.contains('is-open') && !siteNav.contains(e.target) && !navToggle.contains(e.target)) {
+      closeNav();
+    }
+  });
+
+  /* ---------- Hero example project ---------- */
+  const heroVideos = [
+    { id: 'q4ixncPZXAc', title: 'Szpital, łapówki, zepsute hamulce: co nas spotkało w Afryce?', dur: '26:05' },
+    { id: 'SdUdk4R4wNQ', title: 'Jak NAPRAWDĘ żyją dzisiaj Masajowie? Bez prądu i wody w XXI wieku', dur: '20:48' },
+    { id: 'Wy-UjreUm4c', title: 'Afryka za 15$ czy za 1500 zł? Dwa zupełnie różne światy [Kenia]', dur: '18:47' },
+    { id: 'AznsrqcEAxk', title: 'Budujemy meble ogrodowe z palet', dur: '22:27' },
+    { id: 'B1dNN_OwBQg', title: '3 tygodnie poza domem i mamy nowe kurczaki', dur: '27:32' },
+    { id: 'u_uD355-sUU', title: 'Czy damy radę z hodowlą kaczek? Zaczynamy!', dur: '23:58' },
+    { id: '5qFMykDqqKE', title: 'Czy AI zorganizuje lepszą podróż niż my?', dur: '24:38' },
+    { id: 'BSqunKScFaE', title: '5 sposobów na lepsze zdjęcia krajobrazowe // Paweł Jagiełło', dur: '13:20' },
+    { id: 'Am6HJBqY0XI', title: 'Jak stworzyć portret z naturalną emocją? // Aleksandra Zaborowska', dur: '8:32' },
+    { id: '_4aNcOieu6s', title: 'Odkryj sekrety Kopalni Guido i Sztolni Królowa Luiza', dur: '17:33' },
+    { id: 'f60s08255iA', title: 'Gdzie na wakacje w Polsce? 5 sprawdzonych miejsc z dala od ludzi', dur: '26:11' },
+    { id: 'rnwim2Z2P-g', title: 'Dlaczego kochamy umierać w grach?', dur: '13:01' },
+    { id: 'ZZa4wveWqvE', title: 'Tajemnice e-sportu, o których nikt Ci nie powiedział', dur: '10:14' }
+  ];
+
+  const heroFrame = document.getElementById('hero-frame');
+  const heroThumb = document.getElementById('hero-frame-thumb');
+  const heroTitle = document.getElementById('hero-frame-title');
+  const heroDur = document.getElementById('hero-frame-dur');
+  const pick = heroVideos[Math.floor(Math.random() * heroVideos.length)];
+
+  heroThumb.addEventListener('load', () => heroThumb.classList.add('is-loaded'));
+  heroThumb.src = `https://i.ytimg.com/vi/${pick.id}/hqdefault.jpg`;
+  heroThumb.alt = pick.title;
+  heroTitle.textContent = pick.title;
+  heroDur.textContent = pick.dur;
+
+  const playHeroVideo = () => {
+    if (window.location.protocol === 'file:') {
+      window.open(`https://www.youtube.com/watch?v=${pick.id}`, '_blank', 'noopener');
+      return;
+    }
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${pick.id}?autoplay=1&rel=0`;
+    iframe.title = pick.title;
+    iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+    iframe.allowFullscreen = true;
+    heroFrame.innerHTML = '';
+    heroFrame.appendChild(iframe);
+    heroFrame.style.cursor = 'default';
+    heroFrame.removeAttribute('role');
+    heroFrame.removeAttribute('tabindex');
+  };
+  heroFrame.addEventListener('click', playHeroVideo);
+  heroFrame.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      playHeroVideo();
+    }
+  });
+
+  /* ---------- Contact form ---------- */
+  const contactForm = document.getElementById('contact-form');
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const button = form.querySelector('button');
+    const status = form.querySelector('.form-status');
+    const t = i18nStrings[currentLang];
+
+    button.disabled = true;
+    status.textContent = t.sending;
+    status.className = 'form-status';
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.reset();
+        status.textContent = t.success;
+        status.classList.add('success');
+      } else {
+        status.textContent = t.error;
+        status.classList.add('error');
+      }
+    } catch (err) {
+      status.textContent = t.error;
+      status.classList.add('error');
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>

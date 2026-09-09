@@ -150,6 +150,34 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
+  body{ position:relative; }
+  .scroll-line{
+    position:absolute; top:0; left:50%; width:2px;
+    transform:translateX(-50%);
+    pointer-events:none; z-index:-1;
+  }
+  .scroll-line-track{
+    position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 0%, rgba(129,159,167,.18) 8%, rgba(129,159,167,.18) 92%, transparent 100%);
+  }
+  .scroll-line-fill{
+    position:absolute; top:0; left:0; width:100%; height:0%;
+    background:linear-gradient(to bottom, var(--accent), rgba(129,159,167,.55));
+    box-shadow:0 0 12px rgba(129,159,167,.5);
+  }
+  .scroll-line-glow{
+    position:absolute; top:66%; left:50%;
+    width:380px; height:380px;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(247,166,35,.8), transparent 68%);
+    filter:blur(45px);
+    opacity:0;
+    transition:opacity .8s ease;
+  }
+  @media (max-width: 860px){
+    .scroll-line{ display:none; }
+  }
+
   .hero{ padding:120px 0 100px; position:relative; overflow:hidden; }
   .hero-glow{
     position:absolute; z-index:-1; pointer-events:none;
@@ -591,6 +619,11 @@
 <body>
 
 <div class="grain"></div>
+<div class="scroll-line" id="scroll-line">
+  <div class="scroll-line-track"></div>
+  <div class="scroll-line-fill" id="scroll-line-fill"></div>
+  <div class="scroll-line-glow" id="scroll-line-glow"></div>
+</div>
 
 <header>
   <div class="wrap">
@@ -981,20 +1014,42 @@
   langToggle.addEventListener('click', () => applyLang(currentLang === 'pl' ? 'en' : 'pl'));
   applyLang(currentLang);
 
-  /* ---------- Hero glow parallax ---------- */
+  /* ---------- Hero glow + scroll line parallax ---------- */
   const heroGlow = document.querySelector('.hero-glow');
+  const scrollLine = document.getElementById('scroll-line');
+  const scrollLineFill = document.getElementById('scroll-line-fill');
+  const scrollLineGlow = document.getElementById('scroll-line-glow');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (heroGlow && !prefersReducedMotion) {
-    let glowTicking = false;
+
+  if (scrollLine) {
+    const updateLineHeight = () => { scrollLine.style.height = document.documentElement.scrollHeight + 'px'; };
+    updateLineHeight();
+    window.addEventListener('resize', updateLineHeight);
+  }
+
+  if (!prefersReducedMotion) {
+    let scrollTicking = false;
     window.addEventListener('scroll', () => {
-      if (!glowTicking) {
+      if (!scrollTicking) {
         requestAnimationFrame(() => {
           const y = window.scrollY;
-          heroGlow.style.transform = `translateY(${Math.min(y * 0.25, 220)}px)`;
-          heroGlow.style.opacity = String(Math.max(1 - y / 500, 0));
-          glowTicking = false;
+
+          if (heroGlow) {
+            heroGlow.style.transform = `translateY(${Math.min(y * 0.25, 220)}px)`;
+            heroGlow.style.opacity = String(Math.max(1 - y / 500, 0));
+          }
+
+          if (scrollLineFill && scrollLineGlow) {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? Math.min(y / docHeight, 1) : 0;
+            scrollLineFill.style.height = (progress * 100) + '%';
+            const glowProgress = Math.min(Math.max((progress - 0.55) / 0.11, 0), 1);
+            scrollLineGlow.style.opacity = String(glowProgress);
+          }
+
+          scrollTicking = false;
         });
-        glowTicking = true;
+        scrollTicking = true;
       }
     }, { passive: true });
   }

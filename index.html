@@ -506,7 +506,13 @@
   .pricing-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
   .price-card{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:36px; box-shadow:0 16px 32px -20px rgba(0,0,0,.6);
+    padding:36px;
+    box-shadow:
+      0 16px 32px -20px rgba(0,0,0,.6),
+      0 0 0 1px rgba(247,166,35, calc(var(--card-glow-opacity, 0) * .35)),
+      0 -8px 32px -6px rgba(247,166,35, calc(var(--card-glow-opacity, 0) * .55)),
+      0 8px 32px -6px rgba(247,166,35, calc(var(--card-glow-opacity, 0) * .35));
+    transition:box-shadow .8s ease;
   }
   .price-card h3{
     font-family:'Bricolage Grotesque', sans-serif;
@@ -1203,6 +1209,7 @@
             scrollLineFill.style.height = (progress * 100) + '%';
             const glowProgress = Math.min(Math.max((progress - 0.55) / 0.11, 0), 1);
             scrollLineGlow.style.opacity = String(glowProgress);
+            document.documentElement.style.setProperty('--card-glow-opacity', String(glowProgress));
           }
 
           scrollTicking = false;

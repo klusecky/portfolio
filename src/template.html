@@ -732,6 +732,37 @@
     .section{ padding:72px 0; }
     .section-head{ grid-template-columns:1fr; gap:16px; }
   }
+
+  /* ---------- Language hint for Polish browsers (EN page only) ---------- */
+  .lang-hint{
+    position:fixed; left:50%; bottom:20px; z-index:60;
+    width:max-content; max-width:calc(100% - 32px);
+    display:flex; align-items:center; gap:14px;
+    padding:10px 10px 10px 18px;
+    background:rgba(20,22,28,.94);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line); border-radius:14px;
+    box-shadow:0 12px 40px rgba(0,0,0,.45);
+    font-size:14px; color:var(--text-dim);
+    transform:translate(-50%, calc(100% + 40px)); opacity:0;
+    transition:transform .45s cubic-bezier(.16,.84,.44,1), opacity .3s ease;
+  }
+  .lang-hint.is-shown{ transform:translate(-50%, 0); opacity:1; }
+  .lang-hint span{ flex:1; min-width:0; }
+  .lang-hint a{
+    color:var(--text); font-weight:600; text-decoration:none; white-space:nowrap;
+    padding:7px 14px; border-radius:100px;
+    background:var(--accent-soft); border:1px solid rgba(129,159,167,.4);
+    transition:background .2s ease;
+  }
+  .lang-hint a:hover{ background:rgba(129,159,167,.25); }
+  .lang-hint button{
+    background:none; border:0; color:var(--text-dim); cursor:pointer;
+    font-family:inherit; font-size:20px; line-height:1; padding:4px 8px;
+  }
+  .lang-hint button:hover{ color:var(--text); }
+  @media (max-width: 560px){ .lang-hint{ font-size:13px; gap:10px; bottom:14px; } }
+  @media (prefers-reduced-motion: reduce){ .lang-hint{ transition:none; } }
 </style>
 </head>
 <body>
@@ -1398,6 +1429,42 @@
     }
   });
 </script>
+
+<!-- en-only -->
+<script>
+  /* ---------- Suggest the Polish version to Polish-language browsers ---------- */
+  (() => {
+    const KEY = 'pl-hint-dismissed';
+    const remember = () => { try { localStorage.setItem(KEY, '1'); } catch (e) {} };
+    const dismissed = () => { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } };
+
+    const primaryLang = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+    // Arriving via the EN button on /pl/ is an explicit choice of English.
+    const cameFromPolish = document.referrer.startsWith(location.origin + '/pl');
+    if (cameFromPolish) remember();
+    if (!/^pl\b/i.test(primaryLang) || cameFromPolish || dismissed()) return;
+
+    const hint = document.createElement('div');
+    hint.className = 'lang-hint';
+    hint.lang = 'pl';
+    hint.setAttribute('role', 'region');
+    hint.setAttribute('aria-label', 'Wersja językowa');
+    hint.innerHTML =
+      '<span>Wygląda na to, że mówisz po polsku.</span>' +
+      '<a href="/pl/" hreflang="pl">Polska wersja</a>' +
+      '<button type="button" aria-label="Zamknij">×</button>';
+
+    hint.querySelector('button').addEventListener('click', () => {
+      remember();
+      hint.classList.remove('is-shown');
+      setTimeout(() => hint.remove(), 500);
+    });
+
+    document.body.appendChild(hint);
+    setTimeout(() => hint.classList.add('is-shown'), 1200);
+  })();
+</script>
+<!-- /en-only -->
 
 </body>
 </html>

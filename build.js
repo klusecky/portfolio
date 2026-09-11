@@ -275,6 +275,11 @@ function build(lang) {
     aria: countAttr(template, `data-${lang}-aria`)
   };
 
+  // Blocks wrapped in <!-- en-only --> / <!-- pl-only --> ship only with that language.
+  html = html.replace(/<!-- (en|pl)-only -->\r?\n?([\s\S]*?)<!-- \/\1-only -->\r?\n?/g, (_m, blockLang, content) =>
+    blockLang === lang ? content : ''
+  );
+
   let r;
   r = bakeHtml(html, lang);
   html = r.html;
@@ -330,6 +335,7 @@ function build(lang) {
 
   if (/data-(pl|en)[-"=]/.test(html)) throw new Error('Leftover translation attributes in output');
   if (/currentLang/.test(html)) throw new Error('Leftover currentLang reference in output');
+  if (/<!-- \/?(en|pl)-only -->/.test(html)) throw new Error('Unbalanced language-only block in template');
 
   const outFile = path.join(ROOT, ...cfg.outPath);
   fs.mkdirSync(path.dirname(outFile), { recursive: true });

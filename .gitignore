@@ -1,0 +1,11 @@
+# Raw footage / working files - never publish these
+video/
+*.MOV
+*.mov
+*.mp4
+*.wav
+*.braw
+
+# OS noise
+Thumbs.db
+.DS_Store

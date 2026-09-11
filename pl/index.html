@@ -346,6 +346,15 @@
     color:var(--text-dim);
     max-width:38ch;
   }
+  .hero-meta .hero-note{
+    display:flex; align-items:flex-start; gap:10px;
+    font-size:13.5px; letter-spacing:.02em;
+    margin-top:-8px; max-width:none;
+  }
+  .hero-note::before{
+    content:""; width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:.6em;
+    background:var(--accent); box-shadow:0 0 10px rgba(129,159,167,.6);
+  }
   .hero-tags{ display:flex; flex-wrap:wrap; gap:8px; }
   .hero-tags span{
     font-size:13px;
@@ -877,6 +886,7 @@
         <span>Długie formy</span>
         <span>Storytelling</span>
       </div>
+      <p class="hero-note">Baza w UK · pracuję zdalnie z twórcami z całego świata</p>
     </div>
   </div>
   <div class="wrap hero-video-outer">
@@ -1212,7 +1222,7 @@
       </footer>
     </blockquote>
     <div class="retention-box">
-      <span>Średnia retencja moich filmów przy obecnym kontencie</span>
+      <span>Średnia retencja na filmach, które montuję</span>
       <strong>40-50%</strong>
     </div>
   </div>
@@ -1229,6 +1239,7 @@
     </div>
     <div class="about-copy">
       <p>Montuję od lat treści podróżnicze i lifestyle'owe w dłuższym formacie, realizując projekty dla klientów. Zależy mi na tym, żeby materiał opowiadał historię, a nie tylko dobrze wyglądał.</p>
+      <p>Mieszkam w Barnstaple w North Devon i pracuję z klientami zdalnie - materiał trafia do mnie przez chmurę, a gotowy film wraca tą samą drogą, niezależnie od tego, czy jesteś w Polsce, w UK, czy na drugim końcu świata.</p>
       <p>Pracuję w całości w <strong>DaVinci Resolve</strong> - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami.</p>
       <p>Dobrze czuję się też w środowisku 3D - przy prostych, czytelnych animacjach, które wzmacniają przekaz materiału.</p>
       <p>Nie boję się też sztucznej inteligencji - korzystam z niej świadomie, tam gdzie realnie przyspiesza pracę.</p>
@@ -1248,7 +1259,7 @@
   <div class="wrap contact-grid">
     <div class="contact-intro">
       <h2 class="reveal">Masz materiał, który potrzebuje historii?</h2>
-      <p>Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę.</p>
+      <p>Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę. Pracuję w brytyjskim czasie (godzinę za Polską) i bez problemu dopasuję się do Twojego harmonogramu.</p>
     </div>
     <form class="contact-form" id="contact-form" action="https://formspree.io/f/mvkovjqo" method="POST">
       <div class="field">

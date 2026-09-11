@@ -346,6 +346,15 @@
     color:var(--text-dim);
     max-width:38ch;
   }
+  .hero-meta .hero-note{
+    display:flex; align-items:flex-start; gap:10px;
+    font-size:13.5px; letter-spacing:.02em;
+    margin-top:-8px; max-width:none;
+  }
+  .hero-note::before{
+    content:""; width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:.6em;
+    background:var(--accent); box-shadow:0 0 10px rgba(129,159,167,.6);
+  }
   .hero-tags{ display:flex; flex-wrap:wrap; gap:8px; }
   .hero-tags span{
     font-size:13px;
@@ -877,6 +886,7 @@
         <span>Long form</span>
         <span>Storytelling</span>
       </div>
+      <p class="hero-note">UK-based · working remotely with creators worldwide</p>
     </div>
   </div>
   <div class="wrap hero-video-outer">
@@ -1163,7 +1173,7 @@
     <div class="pricing-grid">
       <div class="price-card">
         <h3>Long form</h3>
-        <p class="price-card-sub">YouTube, 15-40 min - editing, color grading, sound, titles</p>
+        <p class="price-card-sub">YouTube, 15-40 min - editing, colour grading, sound, titles</p>
         <ul class="price-rows">
           <li><span>Up to 15 min</span><strong>£150-220</strong></li>
           <li><span>15-25 min</span><strong>£220-320</strong></li>
@@ -1212,7 +1222,7 @@
       </footer>
     </blockquote>
     <div class="retention-box">
-      <span>Average retention on my videos with current content</span>
+      <span>Average audience retention on the videos I edit</span>
       <strong>40-50%</strong>
     </div>
   </div>
@@ -1229,7 +1239,8 @@
     </div>
     <div class="about-copy">
       <p>I've been editing long-form travel and lifestyle content for client projects for years. I care about the footage telling a story, not just looking good.</p>
-      <p>I work entirely in <strong>DaVinci Resolve</strong> - from the cut, through sound, to color grading. Everything in one environment, without jumping between apps.</p>
+      <p>I'm based in Barnstaple in North Devon and work with clients remotely - footage comes in over the cloud and the finished film goes back the same way, whether you're in the UK or on the other side of the world.</p>
+      <p>I work entirely in <strong>DaVinci Resolve</strong> - from the cut, through sound, to colour grading. Everything in one environment, without jumping between apps.</p>
       <p>I'm also comfortable in 3D - simple, clear animations that reinforce the story.</p>
       <p>I'm not afraid of AI either - I use it deliberately, wherever it genuinely speeds up the work.</p>
       <div class="tools">
@@ -1248,7 +1259,7 @@
   <div class="wrap contact-grid">
     <div class="contact-intro">
       <h2 class="reveal">Got footage that needs a story?</h2>
-      <p>Send a few details about your project - footage length, deadline, what it's for - and I'll get back to you as soon as I can.</p>
+      <p>Send a few details about your project - footage length, deadline, what it's for - and I'll get back to you as soon as I can. I work to UK hours and invoice in pounds - and I'm used to fitting around clients in other time zones.</p>
     </div>
     <form class="contact-form" id="contact-form" action="https://formspree.io/f/mvkovjqo" method="POST">
       <div class="field">

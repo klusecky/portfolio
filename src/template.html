@@ -242,6 +242,15 @@
     color:var(--text-dim);
     max-width:38ch;
   }
+  .hero-meta .hero-note{
+    display:flex; align-items:flex-start; gap:10px;
+    font-size:13.5px; letter-spacing:.02em;
+    margin-top:-8px; max-width:none;
+  }
+  .hero-note::before{
+    content:""; width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:.6em;
+    background:var(--accent); box-shadow:0 0 10px rgba(129,159,167,.6);
+  }
   .hero-tags{ display:flex; flex-wrap:wrap; gap:8px; }
   .hero-tags span{
     font-size:13px;
@@ -773,6 +782,7 @@
         <span data-pl="Długie formy" data-en="Long form">Długie formy</span>
         <span>Storytelling</span>
       </div>
+      <p class="hero-note" data-pl="Baza w UK · pracuję zdalnie z twórcami z całego świata" data-en="UK-based · working remotely with creators worldwide">Baza w UK · pracuję zdalnie z twórcami z całego świata</p>
     </div>
   </div>
   <div class="wrap hero-video-outer">
@@ -1059,7 +1069,7 @@
     <div class="pricing-grid">
       <div class="price-card">
         <h3>Long form</h3>
-        <p class="price-card-sub" data-pl="YouTube, 15-40 min - montaż, color grading, dźwięk, tytuły" data-en="YouTube, 15-40 min - editing, color grading, sound, titles">YouTube, 15-40 min - montaż, color grading, dźwięk, tytuły</p>
+        <p class="price-card-sub" data-pl="YouTube, 15-40 min - montaż, color grading, dźwięk, tytuły" data-en="YouTube, 15-40 min - editing, colour grading, sound, titles">YouTube, 15-40 min - montaż, color grading, dźwięk, tytuły</p>
         <ul class="price-rows">
           <li><span data-pl="Do 15 min" data-en="Up to 15 min">Do 15 min</span><strong data-pl="750-1100 zł" data-en="£150-220">£150-220</strong></li>
           <li><span>15-25 min</span><strong data-pl="1100-1600 zł" data-en="£220-320">£220-320</strong></li>
@@ -1108,7 +1118,7 @@
       </footer>
     </blockquote>
     <div class="retention-box">
-      <span data-pl="Średnia retencja moich filmów przy obecnym kontencie" data-en="Average retention on my videos with current content">Średnia retencja moich filmów przy obecnym kontencie</span>
+      <span data-pl="Średnia retencja na filmach, które montuję" data-en="Average audience retention on the videos I edit">Średnia retencja na filmach, które montuję</span>
       <strong>40-50%</strong>
     </div>
   </div>
@@ -1125,7 +1135,8 @@
     </div>
     <div class="about-copy">
       <p data-pl="Montuję od lat treści podróżnicze i lifestyle'owe w dłuższym formacie, realizując projekty dla klientów. Zależy mi na tym, żeby materiał opowiadał historię, a nie tylko dobrze wyglądał." data-en="I've been editing long-form travel and lifestyle content for client projects for years. I care about the footage telling a story, not just looking good.">Montuję od lat treści podróżnicze i lifestyle'owe w dłuższym formacie, realizując projekty dla klientów. Zależy mi na tym, żeby materiał opowiadał historię, a nie tylko dobrze wyglądał.</p>
-      <p data-pl-html="Pracuję w całości w &lt;strong&gt;DaVinci Resolve&lt;/strong&gt; - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami." data-en-html="I work entirely in &lt;strong&gt;DaVinci Resolve&lt;/strong&gt; - from the cut, through sound, to color grading. Everything in one environment, without jumping between apps.">Pracuję w całości w <strong>DaVinci Resolve</strong> - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami.</p>
+      <p data-pl="Mieszkam w Barnstaple w North Devon i pracuję z klientami zdalnie - materiał trafia do mnie przez chmurę, a gotowy film wraca tą samą drogą, niezależnie od tego, czy jesteś w Polsce, w UK, czy na drugim końcu świata." data-en="I'm based in Barnstaple in North Devon and work with clients remotely - footage comes in over the cloud and the finished film goes back the same way, whether you're in the UK or on the other side of the world.">Mieszkam w Barnstaple w North Devon i pracuję z klientami zdalnie - materiał trafia do mnie przez chmurę, a gotowy film wraca tą samą drogą, niezależnie od tego, czy jesteś w Polsce, w UK, czy na drugim końcu świata.</p>
+      <p data-pl-html="Pracuję w całości w &lt;strong&gt;DaVinci Resolve&lt;/strong&gt; - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami." data-en-html="I work entirely in &lt;strong&gt;DaVinci Resolve&lt;/strong&gt; - from the cut, through sound, to colour grading. Everything in one environment, without jumping between apps.">Pracuję w całości w <strong>DaVinci Resolve</strong> - od cięcia, przez dźwięk, po color grading. Wszystko w jednym środowisku, bez przeskakiwania między programami.</p>
       <p data-pl="Dobrze czuję się też w środowisku 3D - przy prostych, czytelnych animacjach, które wzmacniają przekaz materiału." data-en="I'm also comfortable in 3D - simple, clear animations that reinforce the story.">Dobrze czuję się też w środowisku 3D - przy prostych, czytelnych animacjach, które wzmacniają przekaz materiału.</p>
       <p data-pl="Nie boję się też sztucznej inteligencji - korzystam z niej świadomie, tam gdzie realnie przyspiesza pracę." data-en="I'm not afraid of AI either - I use it deliberately, wherever it genuinely speeds up the work.">Nie boję się też sztucznej inteligencji - korzystam z niej świadomie, tam gdzie realnie przyspiesza pracę.</p>
       <div class="tools">
@@ -1144,7 +1155,7 @@
   <div class="wrap contact-grid">
     <div class="contact-intro">
       <h2 class="reveal" data-pl="Masz materiał, który potrzebuje historii?" data-en="Got footage that needs a story?">Masz materiał, który potrzebuje historii?</h2>
-      <p data-pl="Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę." data-en="Send a few details about your project - footage length, deadline, what it's for - and I'll get back to you as soon as I can.">Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę.</p>
+      <p data-pl="Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę. Pracuję w brytyjskim czasie (godzinę za Polską) i bez problemu dopasuję się do Twojego harmonogramu." data-en="Send a few details about your project - footage length, deadline, what it's for - and I'll get back to you as soon as I can. I work to UK hours and invoice in pounds - and I'm used to fitting around clients in other time zones.">Napisz kilka słów o projekcie - długość materiału, termin, do czego ma służyć - i odezwę się najszybciej jak mogę. Pracuję w brytyjskim czasie (godzinę za Polską) i bez problemu dopasuję się do Twojego harmonogramu.</p>
     </div>
     <form class="contact-form" id="contact-form" action="https://formspree.io/f/mvkovjqo" method="POST">
       <div class="field">

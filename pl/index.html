@@ -167,11 +167,14 @@
   }
 
   *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; background:var(--bg); }
+  /* Background lives on <html>, not <body>: a painted body background would cover
+     the z-index:-1 layers (grid, scroll line, hero glow). Also fills the overscroll area. */
+  html{
+    scroll-behavior:smooth;
+    background:var(--bg) linear-gradient(150deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 65%) fixed;
+  }
 
   body{
-    background:linear-gradient(150deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 65%);
-    background-attachment:fixed;
     color:var(--text);
     font-family:'Inter', sans-serif;
     font-weight:400;
@@ -317,7 +320,7 @@
     .scroll-line{ display:none; }
   }
 
-  .hero{ padding:120px 0 100px; position:relative; overflow:hidden; }
+  .hero{ padding:112px 0 72px; position:relative; overflow:hidden; }
   .hero-glow{
     position:absolute; z-index:-1; pointer-events:none;
     top:-220px; right:-160px;
@@ -441,7 +444,7 @@
   }
 
   /* ---------- Work ---------- */
-  .section{ padding:100px 0; }
+  .section{ padding:76px 0; }
   .section + .section{ border-top:1px solid var(--line); }
   .section-head{
     display:grid; grid-template-columns:1.1fr .9fr; gap:132px;
@@ -539,7 +542,7 @@
   .card-ig .card-media{ aspect-ratio:9/16; }
 
   /* ---------- Testimonial ---------- */
-  .testimonial{ padding:80px 0; }
+  .testimonial{ padding:64px 0; }
   .testimonial-quote{
     max-width:800px; margin:0 auto;
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
@@ -729,7 +732,7 @@
   }
 
   /* ---------- Contact / footer ---------- */
-  .contact{ padding:110px 0 80px; }
+  .contact{ padding:84px 0 64px; }
   .contact-grid{ display:grid; grid-template-columns:.85fr 1.15fr; gap:64px; align-items:start; }
   .contact-intro{ display:flex; flex-direction:column; gap:24px; }
   .contact h2{
@@ -833,7 +836,9 @@
     .wrap{ padding:0 22px; }
     .grid{ grid-template-columns:1fr; gap:16px; }
     .grid-ig{ grid-template-columns:repeat(2, 1fr); }
-    .section{ padding:72px 0; }
+    .section{ padding:56px 0; }
+    .hero{ padding:72px 0 48px; }
+    .contact{ padding:64px 0 48px; }
     .section-head{ grid-template-columns:1fr; gap:16px; }
   }
 

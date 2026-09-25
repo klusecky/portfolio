@@ -63,6 +63,11 @@ const LANGS = {
       { name: 'Long-form video editing', description: 'YouTube videos, 15-40 min - editing, colour grading, sound and titles.' },
       { name: 'Short-form video editing', description: 'Reels and Shorts, 15-90 sec - single edits, monthly packages or repurposing from long-form.' }
     ],
+    trialOffer: {
+      name: 'First edit at 50% off',
+      description:
+        'A new client pays half the usual rate for their first project, so both sides can check the editing style and the working relationship before committing to more.'
+    },
     form: {
       sending: 'Sending...',
       success: "Thank you! I'll get back to you as soon as possible.",
@@ -94,6 +99,11 @@ const LANGS = {
       { name: 'Montaż długich form', description: 'Filmy na YouTube, 15-40 min - montaż, color grading, dźwięk i tytuły.' },
       { name: 'Montaż krótkich form', description: 'Reels i Shorts, 15-90 sek - pojedyncze edity, pakiety miesięczne lub repurposing z długiej formy.' }
     ],
+    trialOffer: {
+      name: 'Pierwszy montaż -50%',
+      description:
+        'Pierwszy projekt nowego klienta rozliczany jest za połowę stawki, żeby obie strony mogły sprawdzić styl montażu i współpracę przed kolejnymi zleceniami.'
+    },
     form: {
       sending: 'Wysyłanie...',
       success: 'Dziękuję! Odezwę się najszybciej jak mogę.',
@@ -206,10 +216,18 @@ function buildStructuredData(lang) {
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: cfg.serviceName,
-          itemListElement: cfg.offers.map((o) => ({
-            '@type': 'Offer',
-            itemOffered: { '@type': 'Service', name: o.name, description: o.description }
-          }))
+          itemListElement: [
+            ...cfg.offers.map((o) => ({
+              '@type': 'Offer',
+              itemOffered: { '@type': 'Service', name: o.name, description: o.description }
+            })),
+            {
+              '@type': 'Offer',
+              name: cfg.trialOffer.name,
+              description: cfg.trialOffer.description,
+              itemOffered: { '@type': 'Service', name: cfg.trialOffer.name, description: cfg.trialOffer.description }
+            }
+          ]
         },
         sameAs: SAME_AS
       },
